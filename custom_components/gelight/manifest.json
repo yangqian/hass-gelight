@@ -1,7 +1,7 @@
 {
-  "domain": "myge",
-  "name": "GE Local",
-  "documentation": "https://github.com/google/python-laurel",
+  "domain": "gelight",
+  "name": "GE Light Local Bluetooth Controller",
+  "documentation": "https://github.com/yangqian/hass-gelight",
   "dependencies": [],
   "codeowners": ["@yangqian"],
   "requirements": ["dimond","bluepy"]
