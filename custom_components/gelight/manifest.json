@@ -1,0 +1,8 @@
+{
+  "domain": "myge",
+  "name": "GE Local",
+  "documentation": "https://github.com/google/python-laurel",
+  "dependencies": [],
+  "codeowners": ["@yangqian"],
+  "requirements": ["dimond","bluepy"]
+}
