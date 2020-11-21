@@ -44,6 +44,7 @@ password = input("password:")
 access_token, user_id = authenticate(username, password)
 print("light:")
 devices = get_devices(access_token, user_id)
+errormsg = ""
 for device in devices:
     product_id = device['product_id']
     device_id = device['id']
@@ -54,13 +55,17 @@ for device in devices:
     print("    username: {}".format(username))
     print("    lights:")
     device_info = get_properties(access_token, product_id, device_id)
-    for bulb in device_info['bulbsArray']:
-        id = bulb['deviceID']%1000
-        mac = [bulb['mac'][i:i+2] for i in range(0, 12, 2)]
-        mac = "%s:%s:%s:%s:%s:%s" % (mac[5], mac[4], mac[3], mac[2], mac[1], mac[0])
-        name = bulb['displayName']
-        device_type = bulb['deviceType']
-        print("      - id: {}".format(id))
-        print("        mac: {}".format(mac))
-        print("        name: {}".format(name))
-        print("        type: {}".format(device_type))
+    try:
+        for bulb in device_info['bulbsArray']:
+            id = bulb['deviceID']%1000
+            mac = [bulb['mac'][i:i+2] for i in range(0, 12, 2)]
+            mac = "%s:%s:%s:%s:%s:%s" % (mac[5], mac[4], mac[3], mac[2], mac[1], mac[0])
+            name = bulb['displayName']
+            device_type = bulb['deviceType']
+            print("      - id: {}".format(id))
+            print("        mac: {}".format(mac))
+            print("        name: {}".format(name))
+            print("        type: {}".format(device_type))
+    except KeyError:
+        errormsg+="Warning: Missing bulb info.\n"
+print(errormsg)
