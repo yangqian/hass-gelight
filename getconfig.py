@@ -57,7 +57,7 @@ for device in devices:
     device_info = get_properties(access_token, product_id, device_id)
     try:
         for bulb in device_info['bulbsArray']:
-            id = bulb['deviceID']%1000
+            id = int(bulb['deviceID']) % 1000
             mac = [bulb['mac'][i:i+2] for i in range(0, 12, 2)]
             mac = "%s:%s:%s:%s:%s:%s" % (mac[5], mac[4], mac[3], mac[2], mac[1], mac[0])
             name = bulb['displayName']
