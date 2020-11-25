@@ -156,7 +156,7 @@ class GEDevice(LightEntity):
     @property
     def hs_color(self):
         """Return the hs_color of the light."""
-        return tuple(self.red,self.green,self.blue)
+        return (self.red,self.green,self.blue)
 
     #autobrightness from circadian_lighting if enabled
     def calc_brightness(self):
