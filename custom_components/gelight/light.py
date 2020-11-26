@@ -115,26 +115,27 @@ class GEDevice(LightEntity):
     def __init__(self, hass,network,mac,
         lightid,name,type,max_brightness,min_brightness,icon=None):
         """Initialize the GE light."""
-        self.hass=hass
+        self.hass = hass
         self.id = int(lightid)
         self.mac = mac
-        self.type=int(type)
+        self.type = int(type)
         self.network = network 
         self.power = None
         self._name = name
         self._icon = icon
         self._lightid = lightid
-        self._cl=None
+        self._cl = None
         self._brightness = 0
         self._max_brightness = int (255* max_brightness/100.)
         self._min_brightness = int (255* min_brightness/100.)
-        self._min_mireds= colorutil.color_temperature_kelvin_to_mired(7000)
-        self._max_mireds= colorutil.color_temperature_kelvin_to_mired(2000)
+        self._min_mireds = colorutil.color_temperature_kelvin_to_mired(7000)
+        self._max_mireds = colorutil.color_temperature_kelvin_to_mired(2000)
         self._temperature = self.max_mireds
-        self.ratio=-100./(self.max_mireds-self.min_mireds)
-        self.red=0
-        self.green=0
-        self.blue=0
+        self.ratio = -100./(self.max_mireds-self.min_mireds)
+        self._color = (0, 0)
+        self.red = 0
+        self.green = 0
+        self.blue = 0
 
     @property
     def name(self):
@@ -156,7 +157,7 @@ class GEDevice(LightEntity):
     @property
     def hs_color(self):
         """Return the hs_color of the light."""
-        return (self.red,self.green,self.blue)
+        return self._color
 
     #autobrightness from circadian_lighting if enabled
     def calc_brightness(self):
@@ -180,7 +181,7 @@ class GEDevice(LightEntity):
         else:
           #autobrightness if brightness is not set
           if CIRCADIAN_BRIGHTNESS:
-            brightness=self.calc_brightness()
+            brightness = self.calc_brightness()
             _LOGGER.debug("%s: calculated brightness %s", self.entity_id, str(brightness))
             await self.hass.async_add_executor_job(self.set_brightness,brightness)
         if self.support_temp:
@@ -193,11 +194,11 @@ class GEDevice(LightEntity):
               kelvin=self._cl.data['colortemp']
               temperature = colorutil.color_temperature_kelvin_to_mired(kelvin)
               if self._temperature != temperature:
-                self._temperature=temperature
-                await self.hass.async_add_executor_job(self.set_color_temp,self._temperature)
+                self._temperature = temperature
+                await self.hass.async_add_executor_job(self.set_color_temp, self._temperature)
 
         if ATTR_HS_COLOR in kwargs:
-          await self.hass.async_add_executor_job(self.set_rgb,kwargs[ATTR_HS_COLOR])
+          await self.hass.async_add_executor_job(self.set_hs, kwargs[ATTR_HS_COLOR])
         _LOGGER.debug("%s: adjusted brightness %s", self.entity_id, str(brightness))
         #self.async_write_ha_state()
 
@@ -253,8 +254,10 @@ class GEDevice(LightEntity):
     def set_brightness(self, brightness):
         self.network.send_packet(self.id, 0xd2, [(100*brightness//255)])
         self._brightness = brightness
-    def set_rgb(self, hs_color):
-        red, green, blue= hs_color
+    def set_hs(self, hs_color):
+        self._color = hs_color
+        hue, saturation = hs_color
+        red, green, blue = colorutil.color_hsv_to_RGB(hue, saturation, self._brightness*100/255)
         self.network.send_packet(self.id, 0xe2, [0x04, red, green, blue])
         self.red = red
         self.green = green
