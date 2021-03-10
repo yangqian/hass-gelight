@@ -23,6 +23,7 @@ from time import time
 import dimond
 import threading
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.device_registry import format_mac
 from datetime import timedelta
 SCAN_INTERVAL = timedelta(seconds=240)
 import logging
@@ -119,8 +120,9 @@ class GEDevice(LightEntity):
         self.id = int(lightid)
         self.mac = mac
         self.type = int(type)
-        self.network = network 
+        self.network = network
         self.power = None
+        self._unique_id = format_mac(mac)
         self._name = name
         self._icon = icon
         self._lightid = lightid
@@ -136,6 +138,11 @@ class GEDevice(LightEntity):
         self.red = 0
         self.green = 0
         self.blue = 0
+
+    @property
+    def unique_id(self):
+        """Return the entity unique ID."""
+        return self._unique_id
 
     @property
     def name(self):
@@ -163,7 +170,7 @@ class GEDevice(LightEntity):
     def calc_brightness(self):
         if self._cl==None:
           self._cl = self.hass.data.get(DATA_CIRCADIAN_LIGHTING)
-          if self._cl==None: 
+          if self._cl==None:
             return self.brightness
         if self._cl.data['percent'] > 0:
             return self._max_brightness
@@ -294,7 +301,7 @@ class laurel_mesh:
         for device in self.devices.values():
             # Try each device in turn - we only need to connect to one to be
             # on the mesh
-            try:                
+            try:
                 self.link = dimond.dimond(0x0211, device.mac, self.address, self.password)#,self,callback)
                 self.link.connect()
                 break
