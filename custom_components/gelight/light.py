@@ -20,6 +20,7 @@ CONF_MIN_BRIGHT = 'min_brightness'
 import homeassistant.helpers.config_validation as cv
 from homeassistant.util import color as colorutil
 from time import time
+from time import sleep
 import dimond
 import threading
 from homeassistant.helpers.event import async_track_time_interval
@@ -325,6 +326,7 @@ class laurel_mesh:
             self.link.send_packet(id, command, params)
           except:
             pass
+        sleep(0.05)
         self.lock.release()
 
     def update_status(self):
