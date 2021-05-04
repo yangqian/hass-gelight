@@ -15,8 +15,10 @@ This code use the Home Assistant as the Hub to control GE lights so all your sma
 ## Requirement:
 * Install bluepy and dimond. 
 
+Note this might be done automatically by home assistant. The libraries are installed to ~/.homeassistant/deps/lib/python3.9/site-packages/.
 Bluepy had a bug in described in https://github.com/IanHarvey/bluepy/issues/239 on aarch64.
-Please mannually fix it by applying the patch https://github.com/IanHarvey/bluepy/files/3800265/0001-Bugfix-of-high-CPU-usage.patch.txt.
+Please mannually fix it by applying the patch https://github.com/IanHarvey/bluepy/files/3800265/0001-Bugfix-of-high-CPU-usage.patch.txt
+to the file bluepy-helper.c and run make under the directory bluepy.
 Othewise, you might notice bluepy-helper use 100% CPU resources.
 
 * Register a C by GE account and add your devices to C by GE app.
