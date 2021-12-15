@@ -14,12 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import requests
-API_TIMEOUT = 10
-def authenticate(username, password):
+import getpass
+import json
+import random
+API_TIMEOUT = 5
+# https://github.com/unixpickle/cbyge/blob/main/login.go
+# https://github.com/juanboro/cync2mqtt/blob/main/src/acync/__init__.py
+
+def randomLoginResource():
+    return ''.join([chr(ord('a')+random.randint(0,26)) for i in range(0,16)])
+
+def authenticate():
     """Authenticate with the API and get a token."""
-    API_AUTH = "https://api2.xlink.cn/v2/user_auth"
-    auth_data = {'corp_id': "1007d2ad150c4000", 'email': username,
-                 'password': password}
+    
+    API_AUTH = "https://api.gelighting.com/v2/two_factor/email/verifycode"
+    auth_data = {'corp_id': "1007d2ad150c4000", 'email': username,"local_lang": "en-us"}
+    r = requests.post(API_AUTH, json=auth_data, timeout=API_TIMEOUT)
+    
+    code=input("Enter emailed code:")
+    
+    API_AUTH = "https://api.gelighting.com/v2/user_auth/two_factor"
+    auth_data = {'corp_id': "1007d2ad150c4000", 'email': username, 'password': password, "two_factor": code, "resource": randomLoginResource()}
     r = requests.post(API_AUTH, json=auth_data, timeout=API_TIMEOUT)
     try:
         return (r.json()['access_token'], r.json()['user_id'])
@@ -38,10 +53,9 @@ def get_properties(auth_token, product_id, device_id):
     headers = {'Access-Token': auth_token}
     r = requests.get(API_DEVICE_INFO.format(product_id=product_id, device_id=device_id), headers=headers, timeout=API_TIMEOUT)
     return r.json()
-
-username = input("username:")
-password = input("password:")
-access_token, user_id = authenticate(username, password)
+username = input("Cync Username/Email:")
+password=getpass.getpass()
+access_token, user_id = authenticate()
 print("light:")
 devices = get_devices(access_token, user_id)
 errormsg = ""
