@@ -1,6 +1,7 @@
 {
   "domain": "gelight",
   "name": "GE Light Local Bluetooth Controller",
+  "version": "0.1",
   "documentation": "https://github.com/yangqian/hass-gelight",
   "dependencies": [],
   "codeowners": ["@yangqian"],
