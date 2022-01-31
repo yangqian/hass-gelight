@@ -44,3 +44,10 @@ light:
 
 ## Optional Requirement:
 * Circadian Lighting https://github.com/claytonjn/hass-circadian_lighting
+
+
+## Documentation
+
+Account API documentation can be [found
+here](https://xlink.gitbooks.io/sdk-app/content/app_user_restful/yonghu_shen_fen_jie_kou.html)
+(in Chinese).
