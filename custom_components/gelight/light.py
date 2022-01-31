@@ -241,7 +241,8 @@ class GEDevice(LightEntity):
            self.type == 8 or \
            self.type == 21 or \
            self.type == 22 or \
-           self.type == 23:
+           self.type == 23 or \
+           self.type == 31:
             return True
         return False
     def support_color_temp(self):
@@ -251,6 +252,7 @@ class GEDevice(LightEntity):
            self.type == 11 or \
            self.type == 19 or \
            self.type == 20 or \
+           self.type == 31 or \
            self.type == 80 or \
            self.type == 83 or \
            self.type == 85:
@@ -305,7 +307,7 @@ class laurel_mesh:
             # Try each device in turn - we only need to connect to one to be
             # on the mesh
             try:
-                self.link = dimond.dimond(0x0211, device.mac, self.address, self.password)#,self,callback)
+                self.link = dimond.dimond(0x0211, device.mac, self.address, self.password) #, self, callback)
                 self.link.connect()
                 break
             except Exception as e:
